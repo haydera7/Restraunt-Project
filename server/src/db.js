@@ -1,7 +1,24 @@
 import mongoose from 'mongoose';
 
+let isConnected = false;
+
 export async function connectDB() {
-  const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/restaurant_inventory';
-  await mongoose.connect(uri);
-  console.log('MongoDB connected');
+  if (isConnected) {
+    console.log('Using existing MongoDB connection');
+    return;
+  }
+
+  const uri = process.env.MONGO_URI;
+  if (!uri) {
+    throw new Error('Please define the MONGO_URI environment variable inside Vercel');
+  }
+
+  try {
+    await mongoose.connect(uri);
+    isConnected = true;
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    throw error;
+  }
 }
