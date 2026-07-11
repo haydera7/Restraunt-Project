@@ -5,14 +5,39 @@ import { authRequired, cookieName, createSession, sessionCookieOptions } from '.
 
 const router = express.Router();
 
+/**
+ * Normalize an Ethiopian phone number to +251XXXXXXXXX format.
+ * Accepts: 09XXXXXXXX, 9XXXXXXXX, +2519XXXXXXXX, 2519XXXXXXXX
+ * Returns null if the input doesn't look like a valid Ethiopian mobile number.
+ */
+function normalizePhone(raw) {
+  const s = String(raw || '').trim().replace(/\s+/g, '');
+  let digits;
+  if (s.startsWith('+251')) {
+    digits = s.slice(4);          // strip +251
+  } else if (s.startsWith('251')) {
+    digits = s.slice(3);          // strip 251
+  } else if (s.startsWith('0')) {
+    digits = s.slice(1);          // strip leading 0
+  } else {
+    digits = s;                   // assume bare 9XXXXXXXX
+  }
+  // Ethiopian mobile numbers: 9 digits starting with 9, 7 or 1 (Ethiotelecom)
+  if (!/^\d{9}$/.test(digits)) return null;
+  return '+251' + digits;
+}
+
 function publicUser(user) {
   return { id: user._id, phone: user.phone, role: user.role };
 }
 
 router.post('/login', async (req, res) => {
-  const phone = String(req.body.phone || '').trim();
+  const raw = String(req.body.phone || '').trim();
   const password = String(req.body.password || '');
-  if (!phone || !password) return res.status(400).json({ error: 'Phone number and password are required' });
+  if (!raw || !password) return res.status(400).json({ error: 'Phone number and password are required' });
+
+  const phone = normalizePhone(raw);
+  if (!phone) return res.status(400).json({ error: 'Enter a valid Ethiopian phone number (e.g. 09... or +251...)' });
 
   const user = await User.findOne({ phone });
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
@@ -30,9 +55,13 @@ router.post('/logout', (req, res) => {
 router.get('/me', authRequired, (req, res) => res.json({ user: publicUser(req.user) }));
 
 router.patch('/profile', authRequired, async (req, res) => {
-  const phone = String(req.body.phone || '').trim();
+  const raw = String(req.body.phone || '').trim();
   const { currentPassword } = req.body;
-  if (!phone || !currentPassword) return res.status(400).json({ error: 'Phone number and current password are required' });
+  if (!raw || !currentPassword) return res.status(400).json({ error: 'Phone number and current password are required' });
+
+  const phone = normalizePhone(raw);
+  if (!phone) return res.status(400).json({ error: 'Enter a valid Ethiopian phone number (e.g. 09... or +251...)' });
+
   if (!(await bcrypt.compare(currentPassword, req.user.passwordHash))) {
     return res.status(400).json({ error: 'Current password is incorrect' });
   }

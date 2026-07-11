@@ -1,7 +1,19 @@
 import mongoose from 'mongoose';
 import Ingredient from './models/Ingredient.js';
+import User from './models/User.js';
 
 let isConnected = false;
+
+function normalizePhone(raw) {
+  const s = String(raw || '').trim().replace(/\s+/g, '');
+  let digits;
+  if (s.startsWith('+251')) digits = s.slice(4);
+  else if (s.startsWith('251')) digits = s.slice(3);
+  else if (s.startsWith('0')) digits = s.slice(1);
+  else digits = s;
+  if (!/^\d{9}$/.test(digits)) return null;
+  return '+251' + digits;
+}
 
 export async function connectDB() {
   if (isConnected) {
@@ -57,6 +69,30 @@ export async function connectDB() {
     } catch (migErr) {
       console.error('Database migration failed:', migErr);
     }
+
+    // Migrate legacy phone numbers: normalize all to +251XXXXXXXXX format
+    try {
+      const users = await User.find({});
+      let phoneMigrated = 0;
+      for (const u of users) {
+        const normalized = normalizePhone(u.phone);
+        if (normalized && normalized !== u.phone) {
+          // Check no conflict before updating
+          const conflict = await User.exists({ phone: normalized, _id: { $ne: u._id } });
+          if (!conflict) {
+            u.phone = normalized;
+            await u.save();
+            phoneMigrated++;
+          }
+        }
+      }
+      if (phoneMigrated > 0) {
+        console.log(`Phone migration: normalized ${phoneMigrated} user phone numbers to +251 format.`);
+      }
+    } catch (phoneMigErr) {
+      console.error('Phone migration failed:', phoneMigErr);
+    }
+
   } catch (error) {
     console.error('MongoDB connection error:', error);
     throw error;
