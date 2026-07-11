@@ -21,6 +21,7 @@ app.use('/api/ingredients', authRequired, ingredientsRouter);
 app.use('/api/menu-items', authRequired, menuItemsRouter);
 app.use('/api/tally', authRequired, tallyRouter);
 
+app.get('/', (req, res) => res.send('API is running on Vercel!'));
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;
