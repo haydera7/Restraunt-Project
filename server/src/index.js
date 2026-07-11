@@ -16,6 +16,17 @@ app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173', cre
 app.use(express.json());
 app.use(cookieParser());
 
+// Ensure DB is connected before handling any requests (Crucial for Vercel Serverless)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Failed to connect to database in middleware:', error);
+    res.status(500).json({ error: 'Database connection failed. Please check backend logs.' });
+  }
+});
+
 app.use('/api/auth', authRouter);
 app.use('/api/ingredients', authRequired, ingredientsRouter);
 app.use('/api/menu-items', authRequired, menuItemsRouter);
@@ -25,10 +36,6 @@ app.get('/', (req, res) => res.send('API is running on Vercel!'));
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;
-
-// Connect to DB (this will run on Vercel cold starts)
-connectDB().catch(console.error);
-
 // Only listen locally, Vercel will use the exported app
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
