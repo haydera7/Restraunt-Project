@@ -25,9 +25,12 @@ app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;
 
-connectDB()
-  .then(() => app.listen(PORT, () => console.log(`Server running on port ${PORT}`)))
-  .catch(err => {
-    console.error('Failed to connect to MongoDB', err);
-    process.exit(1);
-  });
+// Connect to DB (this will run on Vercel cold starts)
+connectDB().catch(console.error);
+
+// Only listen locally, Vercel will use the exported app
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+export default app;

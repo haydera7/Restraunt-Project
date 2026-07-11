@@ -23,7 +23,7 @@ export default function LoginScreen({ onLogin }) {
       <h1>Welcome back</h1>
       <p className="auth-copy">Log in to manage tonight’s tally and stock.</p>
       <label htmlFor="login-phone">Mobile phone</label>
-      <input id="login-phone" type="tel" autoComplete="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="e.g. +251 9..." required />
+      <input id="login-phone" type="tel" autoComplete="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder=" 09..." required />
       <label htmlFor="login-password">Password</label>
       <input id="login-password" type="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} required />
       {error && <p className="form-error">{error}</p>}
