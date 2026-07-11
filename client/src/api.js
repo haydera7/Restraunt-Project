@@ -30,8 +30,11 @@ export const api = {
   addIngredient: (data) => request(`${BASE}/ingredients`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
   }),
-  restockIngredient: (id, amount) => request(`${BASE}/ingredients/${id}/restock`, {
-    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount })
+  updateIngredient: (id, data) => request(`${BASE}/ingredients/${id}`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+  }),
+  restockIngredient: (id, amount, amountUnit) => request(`${BASE}/ingredients/${id}/restock`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, amountUnit })
   }),
   deleteIngredient: (id) => request(`${BASE}/ingredients/${id}`, { method: 'DELETE' }),
 

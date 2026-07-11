@@ -1,6 +1,43 @@
 import React, { useState } from 'react';
 import { api } from '../api.js';
 
+function PasswordInput({ id, value, onChange, label, autoComplete, minLength }) {
+  const [show, setShow] = useState(false);
+  return (
+    <>
+      <label htmlFor={id}>{label}</label>
+      <div style={{ position: 'relative', width: '100%' }}>
+        <input 
+          id={id} 
+          type={show ? "text" : "password"} 
+          autoComplete={autoComplete} 
+          minLength={minLength}
+          value={value} 
+          onChange={onChange} 
+          required 
+          style={{ width: '100%', paddingRight: '40px', boxSizing: 'border-box' }}
+        />
+        <button
+          type="button"
+          onClick={() => setShow(!show)}
+          style={{
+            position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-dim, #666)'
+          }}
+          aria-label={show ? "Hide password" : "Show password"}
+        >
+          {show ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          )}
+        </button>
+      </div>
+    </>
+  );
+}
+
 export default function SettingsTab({ user, onUserUpdated, onLogout }) {
   const [phone, setPhone] = useState(user.phone);
   const [profilePassword, setProfilePassword] = useState('');
@@ -50,8 +87,7 @@ export default function SettingsTab({ user, onUserUpdated, onLogout }) {
         <p className="settings-help">Your mobile phone is used to sign in.</p>
         <label htmlFor="settings-phone">Mobile phone</label>
         <input id="settings-phone" type="tel" autoComplete="tel" value={phone} onChange={e => setPhone(e.target.value)} required />
-        <label htmlFor="settings-profile-password">Current password</label>
-        <input id="settings-profile-password" type="password" autoComplete="current-password" value={profilePassword} onChange={e => setProfilePassword(e.target.value)} required />
+        <PasswordInput id="settings-profile-password" label="Current password" autoComplete="current-password" value={profilePassword} onChange={e => setProfilePassword(e.target.value)} />
         {profileMessage && <p className={`settings-message ${profileMessage.error ? 'error' : ''}`}>{profileMessage.text}</p>}
         <button className="btn primary" disabled={savingProfile}>{savingProfile ? 'Saving...' : 'Save phone number'}</button>
       </form>
@@ -59,12 +95,9 @@ export default function SettingsTab({ user, onUserUpdated, onLogout }) {
       <form className="card settings-form" onSubmit={updatePassword}>
         <h2>Password</h2>
         <p className="settings-help">Choose a strong password with at least 8 characters.</p>
-        <label htmlFor="settings-current-password">Current password</label>
-        <input id="settings-current-password" type="password" autoComplete="current-password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required />
-        <label htmlFor="settings-new-password">New password</label>
-        <input id="settings-new-password" type="password" autoComplete="new-password" minLength="8" value={newPassword} onChange={e => setNewPassword(e.target.value)} required />
-        <label htmlFor="settings-confirm-password">Confirm new password</label>
-        <input id="settings-confirm-password" type="password" autoComplete="new-password" minLength="8" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
+        <PasswordInput id="settings-current-password" label="Current password" autoComplete="current-password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+        <PasswordInput id="settings-new-password" label="New password" autoComplete="new-password" minLength="8" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+        <PasswordInput id="settings-confirm-password" label="Confirm new password" autoComplete="new-password" minLength="8" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
         {passwordMessage && <p className={`settings-message ${passwordMessage.error ? 'error' : ''}`}>{passwordMessage.text}</p>}
         <button className="btn primary" disabled={savingPassword}>{savingPassword ? 'Updating...' : 'Change password'}</button>
       </form>
@@ -72,7 +105,7 @@ export default function SettingsTab({ user, onUserUpdated, onLogout }) {
       <div className="card settings-form">
         <h2>Session</h2>
         <p className="settings-help">End this session on the current device.</p>
-        <button className="btn danger-btn" onClick={onLogout}>Log out</button>
+        <button type="button" className="btn danger-btn" onClick={onLogout}>Log out</button>
       </div>
     </div>
   );

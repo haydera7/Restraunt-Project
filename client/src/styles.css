@@ -103,8 +103,15 @@ select, input[type=number], input[type=text], input[type=date], input[type=tel],
   font-family:'Work Sans', sans-serif;font-size:14px;
 }
 select:focus, input:focus{outline:none;border-color:var(--amber);}
-.row{display:flex;gap:10px;align-items:flex-end;}
+.row{display:flex;gap:10px;align-items:flex-start;}
 .row > div{flex:1;}
+/* Add ingredient form grid */
+.add-form{display:grid;grid-template-columns:1.3fr 0.9fr 1.1fr 1.1fr auto;gap:10px;align-items:start;}
+.add-form .field-group{display:flex;flex-direction:column;}
+.add-form .field-hint{font-size:11px;color:var(--ink-dim);margin-top:3px;height:15px;overflow:hidden;}
+.add-form .btn-wrap{display:flex;flex-direction:column;}
+.add-form .btn-wrap label{visibility:hidden;}
+.add-form .btn-wrap .hint-gap{height:15px;margin-top:3px;}
 button.btn{
   background:none;border:1px solid var(--board-line);color:var(--ink);
   padding:9px 16px;border-radius:6px;font-family:'Work Sans', sans-serif;
@@ -262,8 +269,13 @@ button.btn.ghost:hover{color:var(--clay);}
 .history-line:last-child{border-bottom:none;}
 .history-total{color:var(--amber);font-weight:600;}
 @media (max-width:600px){
-  .recipe-editor .row{align-items:stretch;flex-direction:column;}
-  .recipe-editor .row > div{flex:none !important;width:100%;}
+  .row{align-items:stretch;flex-direction:column;gap:12px;}
+  .row > div{flex:none !important;width:100%;}
+  .add-form{grid-template-columns:1fr 1fr;}
+  .add-form .btn-wrap{grid-column:1/-1;}
+  .add-form .btn-wrap label{display:none;}
+  .add-form .btn-wrap .hint-gap{display:none;}
+  .add-form .btn-wrap .btn{width:100%;justify-content:center;}
   .recipe-editor .builder-row{flex-wrap:wrap;}
   .recipe-editor .builder-row .sel{flex:1 1 calc(100% - 44px);}
   .recipe-editor .builder-row .qty{flex:1 1 calc(100% - 44px);}
@@ -298,4 +310,8 @@ button.btn.ghost:hover{color:var(--clay);}
   }
   .ingredient-results td[data-label="Ingredient"]{color:var(--ink);font-weight:600;}
   .ingredient-results td[data-label="Remaining"]{color:var(--amber);}
+}
+@media (max-width:420px){
+  .add-form{grid-template-columns:1fr;}
+  .add-form .btn-wrap{grid-column:1;}
 }
