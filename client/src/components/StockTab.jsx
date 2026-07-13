@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { api } from '../api.js';
+import SearchableSelect from './SearchableSelect.jsx';
 
 function PlusIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>;
@@ -202,67 +203,69 @@ export default function StockTab({ ingredients, menuItems, reload }) {
     <div>
       <div className="card">
         <h2>Add an ingredient</h2>
-        <div className="add-form">
-          {/* Ingredient name */}
-          <div className="field-group">
+        {/* Ingredient Name & Category Row */}
+        <div className="row field-gap">
+          <div>
             <label htmlFor="add-name">Ingredient name</label>
             <input id="add-name" type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Egg" />
-            <div className="field-hint" />
           </div>
-
-          {/* Category */}
-          <div className="field-group">
+          <div style={{ flex: 0.6 }}>
             <label htmlFor="add-category">Category</label>
-            <select id="add-category" value={category} onChange={e => handleCategoryChange(e.target.value)}>
-              <option value="volume">Volume</option>
-              <option value="weight">Weight</option>
-              <option value="count">Count</option>
-            </select>
-            <div className="field-hint" />
-          </div>
-
-          {/* Starting stock */}
-          <div className="field-group">
-            <label htmlFor="add-stock">Starting stock</label>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <input id="add-stock" type="number" min="0" step="0.1" value={stock} onChange={e => setStock(e.target.value)} placeholder="0" style={{ flex: 1 }} />
-              <select value={stockUnit} onChange={e => setStockUnit(e.target.value)} style={{ width: 'auto', flex: 'none' }}>
-                {CONVERSIONS[category].units.map(u => (
-                  <option key={u} value={u}>{CONVERSIONS[category].labels[u]}</option>
-                ))}
-              </select>
-            </div>
-            <div className="field-hint">{getConvertedPreview(stock, stockUnit, category)}</div>
-          </div>
-
-          {/* Min threshold */}
-          <div className="field-group">
-            <label htmlFor="add-threshold">Min threshold</label>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <input id="add-threshold" type="number" min="0" step="0.1" value={threshold} onChange={e => setThreshold(e.target.value)} placeholder="0" style={{ flex: 1 }} />
-              <select value={thresholdUnit} onChange={e => setThresholdUnit(e.target.value)} style={{ width: 'auto', flex: 'none' }}>
-                {CONVERSIONS[category].units.map(u => (
-                  <option key={u} value={u}>{CONVERSIONS[category].labels[u]}</option>
-                ))}
-              </select>
-            </div>
-            <div className="field-hint">{getConvertedPreview(threshold, thresholdUnit, category)}</div>
-          </div>
-
-          {/* Cost */}
-          <div className="field-group">
-            <label htmlFor="add-cost">Cost per {CONVERSIONS[category].labels[stockUnit]}</label>
-            <input id="add-cost" type="number" min="0" step="0.01" value={cost} onChange={e => setCost(e.target.value)} placeholder="0.00" />
-            <div className="field-hint" />
-          </div>
-
-          {/* Add button — invisible label + hint spacer keeps it row-aligned */}
-          <div className="btn-wrap">
-            <label aria-hidden="true">‎</label>
-            <button className="btn primary" onClick={addIngredient}>Add</button>
-            <div className="hint-gap" />
+            <SearchableSelect
+              value={category}
+              onChange={handleCategoryChange}
+              options={[
+                { value: 'volume', label: 'Volume' },
+                { value: 'weight', label: 'Weight' },
+                { value: 'count', label: 'Count' }
+              ]}
+              placeholder="Select category"
+              showSearch={false}
+            />
           </div>
         </div>
+
+        {/* Quantities & Cost Row */}
+        <div className="row field-gap">
+          <div>
+            <label htmlFor="add-stock">Starting stock</label>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <input id="add-stock" type="number" min="0" step="0.1" value={stock} onChange={e => setStock(e.target.value)} placeholder="0" style={{ flex: 1, minWidth: 0 }} />
+              <select value={stockUnit} onChange={e => setStockUnit(e.target.value)} style={{ width: 'auto', flex: 'none', minWidth: 'fit-content' }}>
+                {CONVERSIONS[category].units.map(u => (
+                  <option key={u} value={u}>{CONVERSIONS[category].labels[u]}</option>
+                ))}
+              </select>
+            </div>
+            <div className="field-hint" style={{ fontSize: '11px', color: 'var(--ink-dim)', marginTop: '3px', height: '15px' }}>
+              {getConvertedPreview(stock, stockUnit, category) || ' '}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="add-threshold">Min threshold</label>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <input id="add-threshold" type="number" min="0" step="0.1" value={threshold} onChange={e => setThreshold(e.target.value)} placeholder="0" style={{ flex: 1, minWidth: 0 }} />
+              <select value={thresholdUnit} onChange={e => setThresholdUnit(e.target.value)} style={{ width: 'auto', flex: 'none', minWidth: 'fit-content' }}>
+                {CONVERSIONS[category].units.map(u => (
+                  <option key={u} value={u}>{CONVERSIONS[category].labels[u]}</option>
+                ))}
+              </select>
+            </div>
+            <div className="field-hint" style={{ fontSize: '11px', color: 'var(--ink-dim)', marginTop: '3px', height: '15px' }}>
+              {getConvertedPreview(threshold, thresholdUnit, category) || ' '}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="add-cost">Cost per {CONVERSIONS[category].labels[stockUnit]}</label>
+            <input id="add-cost" type="number" min="0" step="0.01" value={cost} onChange={e => setCost(e.target.value)} placeholder="0.00" />
+            <div className="field-hint" style={{ fontSize: '11px', color: 'var(--ink-dim)', marginTop: '3px', height: '15px' }}> </div>
+          </div>
+        </div>
+
+        <div className="divider"></div>
+        <button className="btn primary" onClick={addIngredient}>Add ingredient</button>
 
         {error && <p style={{ color: 'var(--clay)', fontSize: 13 }}>{error}</p>}
       </div>
@@ -351,11 +354,17 @@ export default function StockTab({ ingredients, menuItems, reload }) {
 
             <div className="field-gap">
               <label htmlFor="edit-category">Category</label>
-              <select id="edit-category" value={editCategory} onChange={e => handleEditCategoryChange(e.target.value)}>
-                <option value="volume">Volume</option>
-                <option value="weight">Weight</option>
-                <option value="count">Count</option>
-              </select>
+              <SearchableSelect
+                value={editCategory}
+                onChange={handleEditCategoryChange}
+                options={[
+                  { value: 'volume', label: 'Volume' },
+                  { value: 'weight', label: 'Weight' },
+                  { value: 'count', label: 'Count' }
+                ]}
+                placeholder="Select category"
+                showSearch={false}
+              />
             </div>
 
             <div className="field-gap">
@@ -424,9 +433,13 @@ export default function StockTab({ ingredients, menuItems, reload }) {
 
             <div className="field-gap">
               <label htmlFor="waste-reason">Reason</label>
-              <select id="waste-reason" value={wasteReason} onChange={e => setWasteReason(e.target.value)}>
-                {WASTAGE_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
+              <SearchableSelect
+                value={wasteReason}
+                onChange={setWasteReason}
+                options={WASTAGE_REASONS.map(r => ({ value: r, label: r }))}
+                placeholder="Select reason"
+                showSearch={false}
+              />
             </div>
 
             <div className="field-gap">

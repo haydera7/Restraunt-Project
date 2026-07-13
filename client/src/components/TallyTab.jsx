@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { api } from '../api.js';
+import SearchableSelect from './SearchableSelect.jsx';
 
 export default function TallyTab({ ingredients, menuItems, reload }) {
   const [selectedId, setSelectedId] = useState(menuItems[0]?._id || '');
@@ -115,13 +116,14 @@ export default function TallyTab({ ingredients, menuItems, reload }) {
       <div className="card tally-add">
         <h2>Add a sold item</h2>
         <div className="row" style={{ alignItems: 'flex-end' }}>
-          <div>
+          <div style={{ flex: 1, minWidth: '180px' }}>
             <label>Menu item</label>
-            <select value={selectedId} onChange={e => setSelectedId(e.target.value)}>
-              {menuItems.length === 0
-                ? <option value="">Add a menu item first</option>
-                : menuItems.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
-            </select>
+            <SearchableSelect
+              value={selectedId}
+              onChange={setSelectedId}
+              options={menuItems.map(m => ({ value: m._id, label: m.name }))}
+              placeholder="🔍 Search menu item..."
+            />
           </div>
           <div style={{ flex: 0.6 }}>
             <label>Quantity sold</label>

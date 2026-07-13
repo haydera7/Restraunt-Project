@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { api } from '../api.js';
+import SearchableSelect from './SearchableSelect.jsx';
 
 function PencilIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg>;
@@ -152,15 +153,18 @@ export default function RecipesTab({ ingredients, menuItems, reload }) {
         {rows.map((r, idx) => (
           <div className="builder-row" key={idx}>
             <div className="sel">
-              <select value={r.ingredientId} onChange={e => updateRow(idx, 'ingredientId', e.target.value)}>
-                {ingredients.map(i => <option key={i._id} value={i._id}>{i.name}</option>)}
-              </select>
+              <SearchableSelect
+                value={r.ingredientId}
+                onChange={val => updateRow(idx, 'ingredientId', val)}
+                options={ingredients.map(i => ({ value: i._id, label: i.name }))}
+                placeholder="🔍 Search ingredient..."
+              />
             </div>
             <div className="qty">
               <input type="number" min="0" step="0.1" placeholder="amount" value={r.qty}
                 onChange={e => updateRow(idx, 'qty', e.target.value)} />
             </div>
-            <button className="btn ghost" onClick={() => removeRow(idx)} aria-label="Remove row">&times;</button>
+            <button className="btn ghost" onClick={() => removeRow(idx)} aria-label="Remove row"><TrashIcon /></button>
           </div>
         ))}
         <button className="btn" style={{ margin: '6px 0 14px' }} onClick={addRow}>+ Add ingredient</button>
@@ -238,14 +242,17 @@ export default function RecipesTab({ ingredients, menuItems, reload }) {
                 {editRows.map((row, index) => (
                   <div className="builder-row" key={index}>
                     <div className="sel">
-                      <select value={row.ingredientId} onChange={e => updateEditRow(index, 'ingredientId', e.target.value)}>
-                        {ingredients.map(ingredient => <option key={ingredient._id} value={ingredient._id}>{ingredient.name}</option>)}
-                      </select>
+                      <SearchableSelect
+                        value={row.ingredientId}
+                        onChange={val => updateEditRow(index, 'ingredientId', val)}
+                        options={ingredients.map(i => ({ value: i._id, label: i.name }))}
+                        placeholder="🔍 Search ingredient..."
+                      />
                     </div>
                     <div className="qty">
                       <input type="number" min="0" step="0.1" value={row.qty} onChange={e => updateEditRow(index, 'qty', e.target.value)} />
                     </div>
-                    <button className="btn ghost" onClick={() => setEditRows(editRows.filter((_, rowIndex) => rowIndex !== index))} aria-label="Remove ingredient">&times;</button>
+                    <button className="btn ghost" onClick={() => setEditRows(editRows.filter((_, rowIndex) => rowIndex !== index))} aria-label="Remove ingredient"><TrashIcon /></button>
                   </div>
                 ))}
                 <button className="btn" onClick={addEditRow}>+ Add ingredient</button>

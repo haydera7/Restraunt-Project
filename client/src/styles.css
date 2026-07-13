@@ -543,6 +543,129 @@ input[type=password] {
   font-size: 14px;
 }
 
+.select-search {
+  margin-bottom: 6px;
+  font-size: 13px !important;
+  padding: 6px 10px !important;
+  background: var(--board-raised-2) !important;
+  border-radius: 6px !important;
+  border-color: var(--board-line) !important;
+}
+
+/* Custom Select Dropdown styles */
+.custom-select-trigger {
+  width: 100%;
+  background: var(--board);
+  border: 1px solid var(--board-line);
+  color: var(--ink);
+  padding: 9px 10px;
+  border-radius: 6px;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: border-color 0.15s ease;
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.custom-select-trigger:hover,
+.custom-select-trigger.open {
+  border-color: var(--amber);
+}
+
+.custom-select-trigger .arrow {
+  font-size: 10px;
+  color: var(--ink-faint);
+  transition: transform 0.2s ease;
+  margin-left: 8px;
+}
+
+.custom-select-trigger.open .arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--board-raised-2);
+  border: 1px solid var(--board-line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-modal);
+  z-index: 100;
+  margin-top: 4px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.custom-select-dropdown .select-search {
+  margin-bottom: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.custom-select-options {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-select-option {
+  padding: 8px 10px;
+  font-size: 13.5px;
+  border-radius: 4px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  text-align: left;
+}
+
+.custom-select-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .custom-select-option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.custom-select-option.selected {
+  background: var(--amber);
+  color: #141C18;
+  font-weight: 600;
+}
+
+.custom-select-option.selected:hover {
+  background: var(--amber);
+  color: #141C18;
+}
+
+[data-theme="light"] .custom-select-option.selected {
+  color: #FFFFFF;
+}
+
+[data-theme="light"] .custom-select-option.selected:hover {
+  background: var(--amber);
+  color: #FFFFFF;
+}
+
+.custom-select-option.empty {
+  color: var(--ink-faint);
+  text-align: center;
+  cursor: default;
+}
+.custom-select-option.empty:hover {
+  background: none;
+}
+
 select:focus,
 input:focus {
   outline: none;
@@ -559,40 +682,7 @@ input:focus {
   flex: 1;
 }
 
-/* Add ingredient form grid */
-.add-form {
-  display: grid;
-  grid-template-columns: 1.3fr 0.9fr 1.1fr 1.1fr auto;
-  gap: 10px;
-  align-items: start;
-}
 
-.add-form .field-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.add-form .field-hint {
-  font-size: 11px;
-  color: var(--ink-dim);
-  margin-top: 3px;
-  height: 15px;
-  overflow: hidden;
-}
-
-.add-form .btn-wrap {
-  display: flex;
-  flex-direction: column;
-}
-
-.add-form .btn-wrap label {
-  visibility: hidden;
-}
-
-.add-form .btn-wrap .hint-gap {
-  height: 15px;
-  margin-top: 3px;
-}
 
 button.btn {
   background: none;
@@ -678,6 +768,16 @@ button.btn.ghost:hover {
   background: var(--clay-dim);
   color: var(--clay);
   transform: scale(1.15);
+}
+
+button.btn.ghost svg {
+  fill: none;
+  height: 14px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+  width: 14px;
 }
 
 .tally-add {
@@ -2138,26 +2238,7 @@ button.btn.ghost:hover {
     width: 100%;
   }
 
-  .add-form {
-    grid-template-columns: 1fr 1fr;
-  }
 
-  .add-form .btn-wrap {
-    grid-column: 1/-1;
-  }
-
-  .add-form .btn-wrap label {
-    display: none;
-  }
-
-  .add-form .btn-wrap .hint-gap {
-    display: none;
-  }
-
-  .add-form .btn-wrap .btn {
-    width: 100%;
-    justify-content: center;
-  }
 
   .recipe-editor .builder-row {
     flex-wrap: wrap;
@@ -2305,21 +2386,5 @@ button.btn.ghost:hover {
 
   .tally-calc-divider {
     display: none;
-  }
-}
-
-@media (max-width:760px) {
-  .add-form {
-    grid-template-columns: 1fr 1fr auto;
-  }
-}
-
-@media (max-width:420px) {
-  .add-form {
-    grid-template-columns: 1fr;
-  }
-
-  .add-form .btn-wrap {
-    grid-column: 1;
   }
 }
