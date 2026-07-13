@@ -33,10 +33,23 @@ export const api = {
   updateIngredient: (id, data) => request(`${BASE}/ingredients/${id}`, {
     method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
   }),
-  restockIngredient: (id, amount, amountUnit) => request(`${BASE}/ingredients/${id}/restock`, {
-    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, amountUnit })
+  restockIngredient: (id, amount, amountUnit, totalPaid) => request(`${BASE}/ingredients/${id}/restock`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount, amountUnit, totalPaid })
   }),
   deleteIngredient: (id) => request(`${BASE}/ingredients/${id}`, { method: 'DELETE' }),
+
+  getWastageReasons: () => request(`${BASE}/wastage/reasons`),
+  logWastage: (data) => request(`${BASE}/wastage`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+  }),
+  getWastageHistory: ({ from, to } = {}) => {
+    const params = new URLSearchParams();
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    const query = params.toString();
+    return request(`${BASE}/wastage/history${query ? `?${query}` : ''}`);
+  },
+  deleteWastageHistory: (id) => request(`${BASE}/wastage/history/${id}`, { method: 'DELETE' }),
 
   getMenuItems: () => request(`${BASE}/menu-items`),
   addMenuItem: (data) => request(`${BASE}/menu-items`, {

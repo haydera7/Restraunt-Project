@@ -32,6 +32,9 @@ export default function TallyTab({ ingredients, menuItems, reload }) {
   const pendingLineTotal = selectedItem && enteredQty > 0
     ? Math.round(selectedItem.price * enteredQty * 100) / 100
     : null;
+  const pendingCostTotal = selectedItem && enteredQty > 0
+    ? Math.round((selectedItem.costToMake || 0) * enteredQty * 100) / 100
+    : null;
 
   const pendingIngredientCalculations = selectedItem && enteredQty > 0
     ? selectedItem.recipe.map(line => {
@@ -111,7 +114,7 @@ export default function TallyTab({ ingredients, menuItems, reload }) {
     <div>
       <div className="card tally-add">
         <h2>Add a sold item</h2>
-        <div className="row">
+        <div className="row" style={{ alignItems: 'flex-end' }}>
           <div>
             <label>Menu item</label>
             <select value={selectedId} onChange={e => setSelectedId(e.target.value)}>
@@ -130,7 +133,15 @@ export default function TallyTab({ ingredients, menuItems, reload }) {
         </div>
         {pendingLineTotal !== null && (
           <div className="tally-calculation" aria-live="polite">
-            {enteredQty} × {selectedItem.price} = <strong>{pendingLineTotal}</strong> sales
+            <span>{enteredQty} × {selectedItem.price} = <strong>{pendingLineTotal}</strong><small className="birr-xs">birr</small> sales</span>
+            {pendingCostTotal !== null && (
+              <>
+                <span className="tally-calc-divider">&middot;</span>
+                <span>cost <strong>{pendingCostTotal}</strong><small className="birr-xs">birr</small></span>
+                <span className="tally-calc-divider">&middot;</span>
+                <span>profit <strong className={(pendingLineTotal - pendingCostTotal) < 0 ? 'loss' : 'gain'}>{Math.round((pendingLineTotal - pendingCostTotal) * 100) / 100}</strong><small className="birr-xs">birr</small></span>
+              </>
+            )}
           </div>
         )}
         {pendingIngredientCalculations.length > 0 && (
@@ -157,14 +168,21 @@ export default function TallyTab({ ingredients, menuItems, reload }) {
             <div className="receipt-line" key={idx}>
               <span className="name">{e.name}</span>
               <span className="qty">x{e.qty}</span>
-              <span className="calculation">{e.qty} × {e.price} = {Math.round(e.price * e.qty * 100) / 100}</span>
-              <button className="btn ghost" onClick={() => removeEntry(idx)} aria-label="Remove">&times;</button>
+              <span className="calculation">{e.qty} × {e.price} = <b>{Math.round(e.price * e.qty * 100) / 100} <small className="birr-sm">Birr</small></b></span>
+              <button className="btn ghost" onClick={() => removeEntry(idx)} aria-label="Remove item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6M14 11v6"/>
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+              </button>
             </div>
           ))}
           {entries.length > 0 && (
             <div className="receipt-line" style={{ borderTop: '1px solid var(--board-line)', borderBottom: 'none', fontWeight: 600 }}>
               <span className="name">Total</span>
-              <span className="qty">{Math.round(runningTotal * 100) / 100} sales</span>
+              <span className="qty">{Math.round(runningTotal * 100) / 100} <small className="birr-sm">Birr</small></span>
             </div>
           )}
         </div>
@@ -177,7 +195,51 @@ export default function TallyTab({ ingredients, menuItems, reload }) {
 
       {result && (
         <div className="card" style={{ marginTop: 16 }}>
-          <h2>Tonight's revenue: {result.totalRevenue}</h2>
+          <h2>Tally Summary</h2>
+          <div className="tally-stats-grid">
+            <div className="tally-stat-card revenue">
+              <div className="tally-stat-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <div className="tally-stat-info">
+                <span className="tally-stat-label">Revenue</span>
+                <span className="tally-stat-value">{result.totalRevenue} Birr</span>
+              </div>
+            </div>
+
+            <div className="tally-stat-card cost">
+              <div className="tally-stat-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="8" x2="18" y2="8"></line>
+                  <line x1="12" y1="12" x2="18" y2="12"></line>
+                  <line x1="8" y1="16" x2="18" y2="16"></line>
+                </svg>
+              </div>
+              <div className="tally-stat-info">
+                <span className="tally-stat-label">Cost</span>
+                <span className="tally-stat-value">{result.totalCost} Birr</span>
+              </div>
+            </div>
+
+            <div className="tally-stat-card profit">
+              <div className="tally-stat-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+              </div>
+              <div className="tally-stat-info">
+                <span className="tally-stat-label">Gross Profit</span>
+                <span className={`tally-stat-value ${result.grossProfit < 0 ? 'loss' : 'gain'}`}>
+                  {result.grossProfit} Birr
+                </span>
+              </div>
+            </div>
+          </div>
           <h2>Ingredients used tonight</h2>
           <table className="result-table ingredient-results">
             <thead>

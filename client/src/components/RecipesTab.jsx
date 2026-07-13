@@ -38,6 +38,23 @@ export default function RecipesTab({ ingredients, menuItems, reload }) {
     setRows(rows.filter((_, i) => i !== idx));
   }
 
+  function costForRows(rowsToPrice) {
+    return rowsToPrice.reduce((sum, r) => {
+      const ing = ingredients.find(i => i._id === r.ingredientId);
+      return sum + (ing?.costPerUnit || 0) * (Number(r.qty) || 0);
+    }, 0);
+  }
+
+  const liveCost = Math.round(costForRows(rows) * 100) / 100;
+  const livePrice = Number(price) || 0;
+  const liveProfit = Math.round((livePrice - liveCost) * 100) / 100;
+  const liveMargin = livePrice > 0 ? Math.round((liveProfit / livePrice) * 1000) / 10 : 0;
+
+  const editLiveCost = Math.round(costForRows(editRows) * 100) / 100;
+  const editLivePrice = Number(editPrice) || 0;
+  const editLiveProfit = Math.round((editLivePrice - editLiveCost) * 100) / 100;
+  const editLiveMargin = editLivePrice > 0 ? Math.round((editLiveProfit / editLivePrice) * 1000) / 10 : 0;
+
   async function save() {
     const recipe = rows
       .filter(r => r.ingredientId && Number(r.qty) > 0)
@@ -72,11 +89,26 @@ export default function RecipesTab({ ingredients, menuItems, reload }) {
       qty: line.qty
     })));
     setEditError('');
+    setTimeout(() => {
+      const el = document.getElementById(`recipe-${item._id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 85);
   }
 
   function cancelEdit() {
+    const id = editingId;
     setEditingId(null);
     setEditError('');
+    if (id) {
+      setTimeout(() => {
+        const el = document.getElementById(`recipe-${id}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 85);
+    }
   }
 
   function updateEditRow(idx, field, value) {
@@ -132,24 +164,65 @@ export default function RecipesTab({ ingredients, menuItems, reload }) {
           </div>
         ))}
         <button className="btn" style={{ margin: '6px 0 14px' }} onClick={addRow}>+ Add ingredient</button>
+        {rows.length > 0 && (
+          <div className="tally-calculation" aria-live="polite">
+            <span>Cost to make: <strong>{liveCost}</strong><small className="birr-xs">birr</small></span>
+            <span className="tally-calc-divider">&middot;</span>
+            <span>Price: <strong>{livePrice}</strong><small className="birr-xs">birr</small></span>
+            <span className="tally-calc-divider">&middot;</span>
+            <span>Profit: <strong className={liveProfit < 0 ? 'loss' : 'gain'}>{liveProfit}</strong><small className="birr-xs">birr</small> <span className="tally-calc-pct">({liveMargin}%)</span></span>
+          </div>
+        )}
         <div className="divider"></div>
         <button className="btn primary" onClick={save}>Save menu item</button>
-        {error && <p style={{ color: 'var(--clay)', fontSize: 13 }}>{error}</p>}
+        {error && <p className="form-error">{error}</p>}
       </div>
 
       <div className="card">
         <h2>Your menu items</h2>
         {menuItems.length === 0 && <div className="empty-note">No menu items yet. Add one above.</div>}
         {menuItems.map(m => (
-          <div className="recipe-item" key={m._id}>
-            <div className="title-row">
-              <span className="name">{m.name} <span className="stock-num" style={{ fontWeight: 400, fontSize: 13 }}>— {m.price}</span></span>
+          <div className={`recipe-item ${m.profit < 0 ? 'has-loss' : 'has-profit'}`} key={m._id} id={`recipe-${m._id}`}>
+            <div className="recipe-header">
+              <div className="recipe-title-group">
+                <span className="recipe-name">{m.name}</span>
+                <span className="recipe-price">{m.price} <span className="price-currency">Birr</span></span>
+              </div>
               <div className="item-actions">
                 <button className="icon-btn" onClick={() => startEdit(m)} aria-label={`Edit ${m.name}`} title="Edit menu item"><PencilIcon /></button>
                 <button className="icon-btn danger" onClick={() => requestDelete(m._id, m.name)} aria-label={`Delete ${m.name}`} title="Delete menu item"><TrashIcon /></button>
               </div>
             </div>
-            {editingId === m._id ? (
+
+            <div className={`recipe-view-wrapper ${editingId !== m._id ? 'open' : ''}`}>
+              <div style={{ minHeight: 0 }}>
+                <div className="recipe-item-meta">
+                  <div className="meta-card cost">
+                    <span className="meta-card-label">Cost to Make</span>
+                    <span className="meta-card-value">{m.costToMake} <span className="meta-card-currency">birr</span></span>
+                  </div>
+                  <div className="meta-card profit">
+                    <span className="meta-card-label">Net Profit</span>
+                    <span className={`meta-card-value ${m.profit < 0 ? 'loss' : 'gain'}`}>
+                      {m.profit} <span className="meta-card-currency">birr</span>
+                      <span className="meta-card-pct">({m.marginPct}%)</span>
+                    </span>
+                  </div>
+                  {m.profit < 0 && <span className="tag loss-badge">selling at a loss</span>}
+                </div>
+                <div className="recipe-list">
+                  {m.recipe.map((r, i) => (
+                    <span key={i}>
+                      <strong style={{ color: 'var(--amber)', fontFamily: 'IBM Plex Mono', fontWeight: 600 }}>{r.qty}</strong>
+                      <span style={{ color: 'var(--ink-faint)', fontSize: '10px', marginLeft: 1, marginRight: 3 }}>{r.ingredient?.unit}</span>
+                      <span>{r.ingredient?.name}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className={`recipe-edit-wrapper ${editingId === m._id ? 'open' : ''}`}>
               <div className="recipe-editor">
                 <div className="row field-gap">
                   <div>
@@ -176,19 +249,22 @@ export default function RecipesTab({ ingredients, menuItems, reload }) {
                   </div>
                 ))}
                 <button className="btn" onClick={addEditRow}>+ Add ingredient</button>
+                {editRows.length > 0 && (
+                  <div className="tally-calculation" aria-live="polite">
+                    <span>Cost to make: <strong>{editLiveCost}</strong><small className="birr-xs">birr</small></span>
+                    <span className="tally-calc-divider">&middot;</span>
+                    <span>Price: <strong>{editLivePrice}</strong><small className="birr-xs">birr</small></span>
+                    <span className="tally-calc-divider">&middot;</span>
+                    <span>Profit: <strong className={editLiveProfit < 0 ? 'loss' : 'gain'}>{editLiveProfit}</strong><small className="birr-xs">birr</small> <span className="tally-calc-pct">({editLiveMargin}%)</span></span>
+                  </div>
+                )}
                 <div className="edit-actions">
                   <button className="btn primary" onClick={saveEdit}><CheckIcon /> Save changes</button>
                   <button className="btn" onClick={cancelEdit}>Cancel</button>
                 </div>
                 {editError && <p className="form-error">{editError}</p>}
               </div>
-            ) : (
-              <div className="recipe-list">
-                {m.recipe.map((r, i) => (
-                  <span key={i}>{r.qty} {r.ingredient?.unit} {r.ingredient?.name}</span>
-                ))}
-              </div>
-            )}
+            </div>
           </div>
         ))}
       </div>

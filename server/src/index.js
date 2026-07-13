@@ -6,6 +6,7 @@ import { connectDB } from './db.js';
 import ingredientsRouter from './routes/ingredients.js';
 import menuItemsRouter from './routes/menuItems.js';
 import tallyRouter from './routes/tally.js';
+import wastageRouter from './routes/wastage.js';
 import authRouter from './routes/auth.js';
 import { authRequired } from './middleware/auth.js';
 
@@ -31,6 +32,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/ingredients', authRequired, ingredientsRouter);
 app.use('/api/menu-items', authRequired, menuItemsRouter);
 app.use('/api/tally', authRequired, tallyRouter);
+app.use('/api/wastage', authRequired, wastageRouter);
 
 app.get('/', (req, res) => res.send('API is running on Vercel!'));
 app.get('/api/health', (req, res) => res.json({ ok: true }));

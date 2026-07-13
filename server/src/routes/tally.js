@@ -20,14 +20,26 @@ router.post('/process', async (req, res) => {
   const usageMap = new Map();
   const soldLines = [];
   let totalRevenue = 0;
+  let totalCost = 0;
 
   for (const entry of entries) {
     const item = menuItems.find(m => m._id.toString() === entry.menuItemId);
     if (!item) continue;
     const qty = Number(entry.qty) || 0;
     const lineTotal = Math.round(item.price * qty * 100) / 100;
+    const costPerItem = item.recipe.reduce((sum, line) => sum + (line.ingredient.costPerUnit || 0) * line.qty, 0);
+    const lineCost = Math.round(costPerItem * qty * 100) / 100;
     totalRevenue += lineTotal;
-    soldLines.push({ menuItem: item._id, name: item.name, qty, price: item.price, lineTotal });
+    totalCost += lineCost;
+    soldLines.push({
+      menuItem: item._id,
+      name: item.name,
+      qty,
+      price: item.price,
+      lineTotal,
+      costPerItem: Math.round(costPerItem * 100) / 100,
+      lineCost
+    });
     for (const line of item.recipe) {
       const key = line.ingredient._id.toString();
       const prev = usageMap.get(key) || { ingredient: line.ingredient, used: 0 };
@@ -69,7 +81,9 @@ router.post('/process', async (req, res) => {
   const log = await TallyLog.create({
     sold: soldLines,
     usage: usageResults,
-    totalRevenue: Math.round(totalRevenue * 100) / 100
+    totalRevenue: Math.round(totalRevenue * 100) / 100,
+    totalCost: Math.round(totalCost * 100) / 100,
+    grossProfit: Math.round((totalRevenue - totalCost) * 100) / 100
   });
   res.status(201).json(log);
 });

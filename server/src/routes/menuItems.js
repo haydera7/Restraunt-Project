@@ -3,9 +3,21 @@ import MenuItem from '../models/MenuItem.js';
 
 const router = express.Router();
 
+function withCosting(itemDoc) {
+  const item = itemDoc.toObject();
+  const costToMake = item.recipe.reduce((sum, line) => {
+    const costPerUnit = line.ingredient?.costPerUnit || 0;
+    return sum + costPerUnit * line.qty;
+  }, 0);
+  item.costToMake = Math.round(costToMake * 100) / 100;
+  item.profit = Math.round((item.price - item.costToMake) * 100) / 100;
+  item.marginPct = item.price > 0 ? Math.round((item.profit / item.price) * 1000) / 10 : 0;
+  return item;
+}
+
 router.get('/', async (req, res) => {
   const items = await MenuItem.find().populate('recipe.ingredient').sort({ name: 1 });
-  res.json(items);
+  res.json(items.map(withCosting));
 });
 
 router.post('/', async (req, res) => {
@@ -19,7 +31,7 @@ router.post('/', async (req, res) => {
   }
   const item = await MenuItem.create({ name, price: Number(price), recipe });
   await item.populate('recipe.ingredient');
-  res.status(201).json(item);
+  res.status(201).json(withCosting(item));
 });
 
 router.put('/:id', async (req, res) => {
@@ -38,7 +50,7 @@ router.put('/:id', async (req, res) => {
     { new: true, runValidators: true }
   ).populate('recipe.ingredient');
   if (!item) return res.status(404).json({ error: 'menu item not found' });
-  res.json(item);
+  res.json(withCosting(item));
 });
 
 router.delete('/:id', async (req, res) => {

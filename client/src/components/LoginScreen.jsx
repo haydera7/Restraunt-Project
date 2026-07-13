@@ -26,7 +26,7 @@ export default function LoginScreen({ onLogin }) {
       <label htmlFor="login-phone">Mobile phone</label>
       <input id="login-phone" type="tel" autoComplete="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="09... or +251..." required />
       <label htmlFor="login-password">Password</label>
-      <div style={{ position: 'relative', width: '100%' }}>
+      <div className="password-input-wrap">
         <input 
           id="login-password" 
           type={showPassword ? "text" : "password"} 
@@ -38,21 +38,8 @@ export default function LoginScreen({ onLogin }) {
         />
         <button
           type="button"
+          className="password-toggle-btn"
           onClick={() => setShowPassword(!showPassword)}
-          style={{
-            position: 'absolute',
-            right: '12px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--ink-dim, #666)'
-          }}
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (

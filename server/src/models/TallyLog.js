@@ -14,14 +14,18 @@ const soldLineSchema = new mongoose.Schema({
   name: String,
   qty: Number,
   price: Number,
-  lineTotal: Number
+  lineTotal: Number,
+  costPerItem: Number,
+  lineCost: Number
 }, { _id: false });
 
 const tallyLogSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   sold: { type: [soldLineSchema], default: [] },
   usage: { type: [usageLineSchema], default: [] },
-  totalRevenue: { type: Number, default: 0 }
+  totalRevenue: { type: Number, default: 0 },
+  totalCost: { type: Number, default: 0 },
+  grossProfit: { type: Number, default: 0 }
 });
 
 export default mongoose.model('TallyLog', tallyLogSchema);
