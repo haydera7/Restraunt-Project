@@ -1,8 +1,13 @@
 const BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
 
+let sessionExpiredHandler = null;
+
 async function handle(res) {
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
+    if (res.status === 401 && sessionExpiredHandler) {
+      sessionExpiredHandler();
+    }
     throw new Error(body.error || `Request failed (${res.status})`);
   }
   if (res.status === 204) return null;
@@ -14,6 +19,9 @@ function request(url, options) {
 }
 
 export const api = {
+  registerSessionExpiredHandler: (handler) => {
+    sessionExpiredHandler = handler;
+  },
   login: (phone, password) => request(`${BASE}/auth/login`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, password })
   }),

@@ -82,6 +82,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    api.registerSessionExpiredHandler(() => {
+      setUser(null);
+      setIngredients([]);
+      setMenuItems([]);
+      setLoading(true);
+    });
+
     api.getMe()
       .then(({ user: authenticatedUser }) => setUser(authenticatedUser))
       .catch(() => setUser(null))
