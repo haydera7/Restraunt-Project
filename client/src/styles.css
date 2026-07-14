@@ -119,8 +119,15 @@ header {
 }
 
 @keyframes logo-pulse {
-  0%, 100% { transform: rotate(-5deg) scale(1); }
-  50% { transform: rotate(5deg) scale(1.1); }
+
+  0%,
+  100% {
+    transform: rotate(-5deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(5deg) scale(1.1);
+  }
 }
 
 .logo-brand {
@@ -506,8 +513,15 @@ nav button.active .tab-icon {
 }
 
 @keyframes tab-icon-bounce {
-  0%, 100% { transform: translateY(0) scale(1.05); }
-  50% { transform: translateY(-2px) scale(1.1); }
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1.05);
+  }
+
+  50% {
+    transform: translateY(-2px) scale(1.1);
+  }
 }
 
 .card {
@@ -668,6 +682,7 @@ input[type=password] {
   text-align: center;
   cursor: default;
 }
+
 .custom-select-option.empty:hover {
   background: none;
 }
@@ -864,6 +879,7 @@ button.btn.ghost svg {
   gap: 14px;
   box-shadow: var(--shadow-card);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
 }
 
 .tally-stat-card:hover {
@@ -901,6 +917,7 @@ button.btn.ghost svg {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .tally-stat-label {
@@ -975,7 +992,7 @@ button.btn.ghost svg {
     align-items: center;
     padding: 8px 0;
   }
-  
+
   /* Row 1, col 1 */
   .receipt-line .name {
     grid-column: 1;
@@ -999,7 +1016,7 @@ button.btn.ghost svg {
     font-size: 11px;
     color: var(--ink-faint);
   }
-  
+
   /* Row 2, col 2 */
   .receipt-line button.btn.ghost {
     grid-column: 2;
@@ -1098,8 +1115,8 @@ button.btn.ghost svg {
   letter-spacing: .04em;
   padding: 3px 10px 3px 8px;
   border-radius: 20px;
-  border: 1.5px solid rgba(255,255,255,.18);
-  box-shadow: 0 0 0 2px rgba(192,57,43,.35), 0 2px 8px rgba(192,57,43,.4);
+  border: 1.5px solid rgba(255, 255, 255, .18);
+  box-shadow: 0 0 0 2px rgba(192, 57, 43, .35), 0 2px 8px rgba(192, 57, 43, .4);
   animation: loss-pulse 2s ease-in-out infinite;
   vertical-align: middle;
 }
@@ -1112,12 +1129,19 @@ button.btn.ghost svg {
 [data-theme="light"] .tag.loss {
   background: #C0392B;
   color: #ffffff;
-  box-shadow: 0 0 0 2px rgba(192,57,43,.25), 0 2px 8px rgba(192,57,43,.3);
+  box-shadow: 0 0 0 2px rgba(192, 57, 43, .25), 0 2px 8px rgba(192, 57, 43, .3);
 }
 
 @keyframes loss-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px rgba(192,57,43,.35), 0 2px 8px rgba(192,57,43,.4); }
-  50%       { box-shadow: 0 0 0 5px rgba(192,57,43,.15), 0 4px 14px rgba(192,57,43,.5); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgba(192, 57, 43, .35), 0 2px 8px rgba(192, 57, 43, .4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 5px rgba(192, 57, 43, .15), 0 4px 14px rgba(192, 57, 43, .5);
+  }
 }
 
 /* Ingredient Cards System */
@@ -1246,8 +1270,15 @@ button.btn.ghost svg {
 }
 
 @keyframes stock-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
 }
 
 .stock-val {
@@ -1447,8 +1478,8 @@ button.btn.ghost svg {
   letter-spacing: .04em;
   padding: 3px 8px 3px 6px;
   border-radius: 12px;
-  border: 1.5px solid rgba(255,255,255,.18);
-  box-shadow: 0 0 0 2px rgba(192,57,43,.2), 0 2px 6px rgba(192,57,43,.3);
+  border: 1.5px solid rgba(255, 255, 255, .18);
+  box-shadow: 0 0 0 2px rgba(192, 57, 43, .2), 0 2px 6px rgba(192, 57, 43, .3);
   animation: loss-pulse 2.5s ease-in-out infinite;
   display: inline-flex;
   align-items: center;
@@ -1463,7 +1494,7 @@ button.btn.ghost svg {
 [data-theme="light"] .tag.loss-badge {
   background: #C0392B;
   color: #ffffff;
-  box-shadow: 0 0 0 2px rgba(192,57,43,.15), 0 2px 6px rgba(192,57,43,.2);
+  box-shadow: 0 0 0 2px rgba(192, 57, 43, .15), 0 2px 6px rgba(192, 57, 43, .2);
 }
 
 .item-actions {
@@ -1510,8 +1541,8 @@ button.btn.ghost svg {
   grid-template-rows: 0fr;
   opacity: 0;
   overflow: hidden;
-  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
 }
 
@@ -1525,9 +1556,9 @@ button.btn.ghost svg {
   grid-template-rows: 0fr;
   opacity: 0;
   overflow: hidden;
-  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: 0;
   width: 100%;
 }
@@ -1974,6 +2005,59 @@ button.btn.ghost svg {
   margin-bottom: 12px;
 }
 
+.period-select-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.period-select-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 210px;
+}
+
+.period-select-wrap select,
+.period-select-wrap input[type="date"] {
+  min-width: 210px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.period-select-wrap select:focus,
+.period-select-wrap input[type="date"]:focus {
+  box-shadow: 0 0 0 3px var(--amber-dim);
+}
+
+.history-stats-grid {
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 4px;
+}
+
+.history-stats-grid .tally-stat-card:nth-child(5) {
+  grid-column: span 2;
+}
+
+@media (max-width: 900px) {
+  .history-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .history-stats-grid .tally-stat-card:nth-child(5) {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .history-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .history-stats-grid .tally-stat-card:nth-child(5) {
+    grid-column: span 1;
+  }
+}
+
 .history-filters {
   align-items: flex-end;
 }
@@ -2094,7 +2178,7 @@ button.btn.ghost svg {
   background: linear-gradient(135deg, #1A2E26 0%, #142219 100%);
   border: 1px solid #2E4A3A;
   border-radius: 10px;
-  box-shadow: 0 0 0 1px rgba(143, 181, 138, .08), 0 4px 12px rgba(0,0,0,.3);
+  box-shadow: 0 0 0 1px rgba(143, 181, 138, .08), 0 4px 12px rgba(0, 0, 0, .3);
   flex-direction: column;
   gap: 1px;
   margin-left: auto;
@@ -2166,9 +2250,9 @@ button.btn.ghost svg {
   grid-template-rows: 0fr;
   opacity: 0;
   overflow: hidden;
-  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
-              margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: 0;
   width: 100%;
 }
@@ -2220,6 +2304,7 @@ button.btn.ghost svg {
 }
 
 @media (max-width:600px) {
+
   /* --- Header mobile --- */
   .header-title {
     font-size: 28px;
@@ -2369,7 +2454,7 @@ button.btn.ghost svg {
     gap: 4px;
   }
 
-  .history-line > span:last-child {
+  .history-line>span:last-child {
     align-self: flex-end;
     text-align: right;
   }
