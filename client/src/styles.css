@@ -497,6 +497,12 @@ nav button.active .tab-icon {
 
 [data-theme="dark"] nav button.active {
   color: #FFFFFF;
+  background: linear-gradient(135deg, #EFB255 0%, #E07A50 55%, #D0654A 100%);
+  box-shadow:
+    0 4px 14px rgba(208, 101, 74, 0.45),
+    0 1px 4px rgba(239, 178, 85, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 @keyframes tab-icon-bounce {
@@ -963,8 +969,49 @@ button.btn.ghost svg {
 
 @media (max-width: 480px) {
   .receipt-line {
-    flex-wrap: wrap;
-    gap: 4px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    align-items: center;
+    padding: 8px 0;
+  }
+  
+  /* Row 1, col 1 */
+  .receipt-line .name {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* Row 1, col 2 */
+  .receipt-line .qty {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    justify-self: end;
+    text-align: right;
+  }
+
+  /* Row 2, col 1 */
+  .receipt-line .calculation {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+  
+  /* Row 2, col 2 */
+  .receipt-line button.btn.ghost {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+    align-self: center;
+    width: 30px;
+    height: 30px;
+    background: var(--clay-dim);
+    color: var(--clay);
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 }
 
@@ -2201,6 +2248,8 @@ button.btn.ghost svg {
   /* --- Nav mobile --- */
   nav {
     gap: 3px;
+    padding: 4px;
+    border-radius: 14px;
   }
 
   nav button {
@@ -2210,8 +2259,9 @@ button.btn.ghost svg {
     border-radius: 10px;
   }
 
+  /* Dark mode nav mobile — keep its own bg treatment */
   [data-theme="dark"] nav {
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 4px;
   }
 
@@ -2219,7 +2269,25 @@ button.btn.ghost svg {
     padding: 9px 8px;
     font-size: 12px;
     gap: 5px;
-    border-radius: 9px;
+    border-radius: 10px;
+  }
+
+  /* Dark mode active tab — apply full warm gradient + glow */
+  [data-theme="dark"] nav button.active {
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #EFB255 0%, #E07A50 55%, #D0654A 100%);
+    box-shadow:
+      0 4px 14px rgba(208, 101, 74, 0.45),
+      0 1px 4px rgba(239, 178, 85, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  /* Dark mode active hover */
+  [data-theme="dark"] nav button.active:hover {
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #EFB255 0%, #E07A50 55%, #D0654A 100%);
+    transform: translateY(-1px);
   }
 
   nav button .tab-icon {
